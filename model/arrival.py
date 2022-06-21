@@ -5,6 +5,7 @@ from model.train_location import *
 class Arrival:
 
     def __init__(self, raw_data):
+        print(raw_data)
         self._services = []
         self.parse_data(raw_data)
 

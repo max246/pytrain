@@ -1,19 +1,26 @@
 import configparser
-from lib.thameslink import *
+from flask import Flask
+from flask_cors import CORS
+from lib.api import *
 
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-token = config.get("main", "token")
-tl = Thameslink(token)
 
-'''stations = tl.get_stations()
-station = stations[0]
-r = tl.get_departure_board(station.get_prefix())
-rs = r.get_services()
-print("Service from ", station.get_name())
-rs[0].print()
-'''
-r = tl.get_arrival_board('SAC')
+app = Flask(__name__)
+app.config['TOKEN_LDBWS'] = config.get("main", "token")
+app.config['TRAIN'] =  Thameslink(app.config['TOKEN_LDBWS'] )
+
+
+r = app.config['TRAIN'].get_arrival_board('SAC')
 rs = r.get_services()
 rs[0].print()
+CORS(app)
+
+app.register_blueprint(api)
+
+def main():
+    app.run(host='0.0.0.0', debug=False, port=5050)
+
+if __name__ == '__main__':
+    main()
